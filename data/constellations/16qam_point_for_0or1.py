@@ -1,8 +1,9 @@
 import pandas as pd
 import re
 
+
 # 16point
-data = pd.read_csv('E:\\Huang_ATSC\\Yuan_ML\\train_data\\16qam_point.csv')
+data = pd.read_csv('F:\\Huang_ATSC\\MLForSchool\\data\\16qam_point.csv')
 all_expanded_data = []
 
 for i, row in data.iterrows():
@@ -34,16 +35,20 @@ for i, row in data.iterrows():
             -complex_numbers[2],
             -complex_numbers[3]
         ]
-        print(expanded_complex_numbers)
+        
+        #Remove ()
+        expanded_complex_numbers = [re.sub(r'[()]', '', str(num)) for num in expanded_complex_numbers]
+        
+        #print(expanded_complex_numbers)
         all_expanded_data.append(expanded_complex_numbers)
 
 # Create column labels for the DataFrame
-column_labels = [f'Column {j+1}' for j in range(len(expanded_complex_numbers))]
+column_labels = [f'{j+1}' for j in range(len(expanded_complex_numbers))]
 
 # Create a DataFrame from the list of expanded_complex_numbers
 expanded_data_df = pd.DataFrame(all_expanded_data, columns=column_labels)
 
-aa = expanded_data_df.to_csv('E:\\Huang_ATSC\\Yuan_ML\\train_data\\16qam_16point.csv')
+aa = expanded_data_df.to_csv('F:\\Huang_ATSC\\MLForSchool\\data\\16qam_16point.csv')
         
 
 

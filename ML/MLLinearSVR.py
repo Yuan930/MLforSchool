@@ -18,11 +18,11 @@ import joblib
 def transpose(list1):
     return[list(row) for row in zip(*list1)]
 
-data_1 = pd.read_csv('F:\\Huang_ATSC\\Yuan_ML\\data\\16qam_train\\train_test.csv')#drop 要刪除的行或列 要刪掉的話要加axis=1
-x_train = data_1.drop(['ans','id'],axis=1).values
+data_1 = pd.read_csv('F:\\Huang_ATSC\\MLforSchool\\data\\16qam_train\\train_3_15.csv')#drop 要刪除的行或列 要刪掉的話要加axis=1
+x_train = data_1.drop(['ans','complex','id'],axis=1).values #feature1,feature2
 print(x_train.shape)
-data_3 = pd.read_csv('F:\\Huang_ATSC\\Yuan_ML\\data\\16qam_test\\test_3_15_1000\\random_feature_numbers1000_test.csv')
-x_test = data_3.drop(['complex'],axis=1).values
+data_3 = pd.read_csv('F:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\random_feature100_forTest.csv')
+x_test = data_3.drop(['complex'],axis=1).values #feature1,feature2
 for i in range(1,2):
     locals()['y_train'] = data_1['ans'].values
     #,loss='squared_epsilon_insensitive' 要做L2就要有這行(要加在c參數的後面) 做L1就把這行刪掉
@@ -40,5 +40,5 @@ b = a
 #a.to_excel('predict_results_lab47-1_linearsvr.xlsx') 原本的 為了統一方便改成下一行
 #a.to_excel('predict_answer_lab207_linearsvr.xlsx')
 #a.to_csv('predict_answer_lab209-1_linearsvr.csv') 
-a.to_csv('F:\\Huang_ATSC\\Yuan_ML\\data\\16qam_test\\test_3_15_1000\\predict_answer_3_15_1000.csv')
+a.to_csv('F:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\ans_for_test\\linearsvr_predict_answer_3_15_100.csv')
 #b.to_csv('C://Users//701//Desktop//check_BER//H_BER_96_lin.csv')#為了要算BER，估測出來的H用來等化
