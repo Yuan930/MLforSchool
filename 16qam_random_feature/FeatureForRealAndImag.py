@@ -10,7 +10,7 @@ def generate_complex_number():
     return complex(x_real, y_imag)
 
 # 設定負數數量
-num_complex_numbers = 100
+num_complex_numbers = 2
 
 complex_numbers = []
 
@@ -29,6 +29,8 @@ data['complex'] = data['complex'].apply(lambda x: re.sub(r'[()]', '', str(x)))  
 
 
 # 儲存CSV檔案
-data.to_csv('F:\\Huang_ATSC\\MLforSchool\\data\\random_feature100_forTest.csv', index=False)
+data.to_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\a\\random_feature2_forTest.csv', index=False)
 
 print(data)
+
+
