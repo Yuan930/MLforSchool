@@ -2,11 +2,10 @@ import pandas as pd
 import numpy as np
 import re
 # 16point for h0 or h1
-point16_h0 = pd.read_csv('E:\\Huang_ATSC\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_3_15.csv')
-point16_h1 = pd.read_csv('E:\\Huang_ATSC\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_3_15.csv')
-random_feature = pd.read_csv('E:\\Huang_ATSC\\MLforSchool\\data\\random_feature100_forTest.csv')
-#random_feature = pd.read_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\a\\random_feature2_forTest.csv')
-#random_feature = pd.read_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
+point16_h0 = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
+point16_h1 = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
+#random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_test\\random_feature100_forTest.csv')
+random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
 
 point16_h0.replace('i', 'j', regex=True, inplace=True)
 point16_h1.replace('i', 'j', regex=True, inplace=True)
@@ -34,13 +33,11 @@ for j, row_rf in random_feature.iterrows():
 result_matrix = []
 # 每行四個答案
 num_rows = len(results) // 4
-#result_matrix = np.array(results[:4 * num_rows]).reshape(num_rows, 4)
-result_matrix.append(num_rows)
+result_matrix = np.array(results[:4 * num_rows]).reshape(num_rows, 4)
 fUi = pd.DataFrame(result_matrix, columns=[f'b{i}' for i in range(4)])
 
-#generate_fUi = fUi.to_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_train\\train_2_15_test.csv') #train
-#generate_fUi = fUi.to_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\ans_for_test\\test_3_15_test.csv') #test
-generate_fUi = fUi.to_csv('E:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\a\\test3.csv') #test
+generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_train\\train_10_15_1000.csv') #train
+#generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') #test
 
 
 
