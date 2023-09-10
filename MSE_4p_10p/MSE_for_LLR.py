@@ -2,14 +2,15 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 
 # actual answer
-actual_answers = pd.read_csv('F:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\ans_for_test\\actual_answer_3_15_100.csv') 
+actual_answers = pd.read_csv('D:\\MLforSchool\\data\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') 
 
 # predict answer
-predicted_answers = pd.read_csv('F:\\Huang_ATSC\\MLforSchool\\data\\16qam_test\\ans_for_test\\mlp_predict_answer_3_15_100.csv')
+predicted_answers = pd.read_csv('D://MLforSchool//dnn_experiments//lab1_trans_answer_mlp_16qam_10_15_100.csv')
 
 # pick the answer
-actual_values = actual_answers['ans'].values
-predicted_values = predicted_answers['ans'].values
+for col in ['0', '1', '2', '3']:
+    actual_values = actual_answers[col].values
+    predicted_values = predicted_answers[col].values
 
 # calculate MSE
 mse = mean_squared_error(actual_values, predicted_values)
