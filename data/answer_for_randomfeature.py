@@ -2,11 +2,11 @@ import pandas as pd
 import numpy as np
 import re
 # 16point for h0 or h1
-point16_h0 = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
-point16_h1 = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
+point16_h0 = pd.read_csv('D:\\Desktop\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
+point16_h1 = pd.read_csv('D:\\Desktop\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
 #random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_test\\random_feature100_forTest.csv')
 #random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
-random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_valid\\random_feature_forVaild.csv')
+random_feature = pd.read_csv('D:\\Desktop\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\random_feature100_forVaild.csv')
 
 
 point16_h0.replace('i', 'j', regex=True, inplace=True)
@@ -40,7 +40,7 @@ fUi = pd.DataFrame(result_matrix, columns=[f'b{i}' for i in range(4)])
 
 #generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_train\\train_10_15_1000.csv') #train
 #generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') #test
-generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_valid\\ans\\valid_10_15_100.csv') #valid
+generate_fUi = fUi.to_csv('D:\\Desktop\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\ans\\valid_10_15_100000.csv') #valid
 
 
 
