@@ -13,8 +13,6 @@ point16_h0_csv.replace('i', 'j', regex=True, inplace=True)
 point16_h1_csv.replace('i', 'j', regex=True, inplace=True)
 random_feature_csv.replace('i', 'j', regex=True, inplace=True)
 
-def point16_h(row):
-    return [complex(row[str(j)]) for j in range(1, 9)]
 
 def cal_distance(a, b):
     return abs(a - b)
@@ -60,7 +58,7 @@ for key in dict_for_bit_ans.keys():
         if index not in result:
             result[index] = []
         result[index].append(item)
-        if (len(result[index]) >= 10):              #根據測試資料的行數更改
+        if (len(result[index]) >= 10):  #根據測試資料的行數更改
             index = index + 1
 
     csv = pd.DataFrame(result)                
