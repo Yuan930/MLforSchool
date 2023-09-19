@@ -24,21 +24,20 @@ data_3 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test
 x_test = data_3.drop(['complex'],axis=1).values
 
 
-def create_DNN_model(input_dim, neurons_per_layer):
+def create_DNN_model(hidden_layers, input_dim, neurons_per_layer):
+    model = Sequential()#進行建造網路架構 在Sequential()裡面定義層數、激勵函數
+    model.add(Dense(neurons_per_layer, input_dim = input_dim,  kernel_initializer='normal',activation='relu'))
+    for i in range(hidden_layers-1):
+        model.add(Dense(neurons_per_layer, kernel_initializer='normal', activation='relu'))
     
-    return add(Dense(neurons_per_layer, input_dim,  kernel_initializer='normal',activation='relu'))
-   
+    return model    
 
 for i in range(0,4):
     locals()['y_train'+str(i)] = data_1['b'+str(i)].values
 
 #print(y_train3)
     locals()['y_valid'+str(i)] = data_2['b'+str(i)].values
-    model = Sequential()#進行建造網路架構 在Sequential()裡面定義層數、激勵函數
-    model.add(Dense(15, input_dim=2, kernel_initializer='normal', activation='relu'))  # 輸入層
-    model.create_DNN_model(2,15)    #input_dim, neurons_per_layer
-    model.create_DNN_model(2,15)
-    model.create_DNN_model(2,15)
+    model = create_DNN_model(4,2,15)    #hidden_layers, input_dim, neurons_per_layer
     model.add(Dense(1,  kernel_initializer='normal',activation='linear'))   #輸出層
     model.compile(loss='MSE', optimizer='adam') #設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
     epochs = 40 #代表疊帶40次(總共要用全部的訓練樣本重複跑幾回合)
