@@ -57,7 +57,7 @@ print(results_matrix)
 csv = pd.DataFrame(results_matrix)
 csv.index = [f'b{i}' for i in range(bit)]
 #generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_train\\train_10_15_1000.csv') #train
-csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_1001.csv') #test
+csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') #test
 #csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\valid_10_15_1000.csv') #valid
 
 
