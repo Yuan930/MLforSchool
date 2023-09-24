@@ -3,10 +3,13 @@ import numpy as np
 import random
 import re
 
+
+folder_name = '16qam_test'
+csv_name = 'random_feature100_fortest.csv'
 # 生成隨機複數
 def generate_complex_number():
-    x_real = random.uniform(0, 3)
-    y_imag = random.uniform(0, 3)
+    x_real = random.uniform(0, 1.2)
+    y_imag = random.uniform(0, 1.2)
     return complex(x_real, y_imag)
 
 # 設定負數數量
@@ -29,8 +32,7 @@ data['complex'] = data['complex'].apply(lambda x: re.sub(r'[()]', '', str(x)))  
 
 
 # 儲存CSV檔案
-data.to_csv('D:\\MLforSchool\\data\\16qam_valid\\random_feature_forVaild.csv', index=False)
+data.to_csv(f'D:\\MLforSchool\\data\\16qam_for_randomfeature\\{folder_name}\\{csv_name}', index=False)
 
-print(data)
 
 
