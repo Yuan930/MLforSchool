@@ -2,12 +2,12 @@ import pandas as pd
 import numpy as np
 import re
 # 16point for h0 or h1
-point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_9_15.csv')
-point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_9_15.csv')
-#random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\random_feature100_forTest.csv')
-#random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
+point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
+point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
+#random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\random_feature100_fortest_with1.4.csv')
+# random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_train\\random_feature1000_forTrain.csv')
 #random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\random_feature100_forVaild.csv')
-random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\check.csv')
+random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\random_feature100_forTest.csv')
 
 
 point16_h0_csv.replace('i', 'j', regex=True, inplace=True)
@@ -57,9 +57,9 @@ print(results_matrix)
 # result_matrix = np.array(results[:4 * num_rows]).reshape(num_rows, 4)
 csv = pd.DataFrame(results_matrix)
 csv.index = [f'b{i}' for i in range(bit)]
-#generate_fUi = fUi.to_csv('D:\\MLforSchool\\data\\16qam_train\\train_10_15_1000.csv') #train
-#csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') #test
-#csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\valid_10_15_1000.csv') #valid
-csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\check_ans9.csv')
+# csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_train\\train_10_15_1000.csv') #train
+csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_1001.csv') #test
+#csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\valid_10_15_1001.csv') #valid
+#csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\check_ans9.csv')
 
 

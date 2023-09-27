@@ -4,16 +4,16 @@ import random
 import re
 
 
-folder_name = '16qam_test'
-csv_name = 'random_feature100_fortest.csv'
+folder_name = '16qam_train'
+csv_name = 'random_feature10000_forTrain_with1.4.csv'
 # 生成隨機複數
 def generate_complex_number():
-    x_real = random.uniform(0, 1.2)
-    y_imag = random.uniform(0, 1.2)
+    x_real = random.uniform(0, 1.4)
+    y_imag = random.uniform(0, 1.4)
     return complex(x_real, y_imag)
 
 # 設定負數數量
-num_complex_numbers = 100
+num_complex_numbers = 10000
 
 complex_numbers = []
 
