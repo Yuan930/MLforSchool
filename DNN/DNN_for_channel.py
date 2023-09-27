@@ -15,23 +15,14 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def transpose(list1):
     return[list(row) for row in zip(*list1)]
-def pick_ans_data(bit):
-    train_data_channel_ans = pd.DataFrame(columns=['A', 'B', 'C'], index=[0,1,2])
-    for bit in train_data_channel_ans:
-        return pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\result_{bit}.csv')
-        
-train_of_channel_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\train_10_15_1000.csv')
-x_train_feature = train_of_channel_feature.drop(['b0','b1','b2','b3','id'],axis=1).values
-train_of_channel_ans[i]  = pick_ans_data(4), for i in range(4)
-x_train_ans = train_of_channel_ans[i].drop(['b0','b1','b2','b3','id'],axis=1).values
+data_1 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_train\\ans\\train_10_15_10000_1.4.csv')
+x_train = data_1[['feature1','feature2']].values
 
-valid_of_channel_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\ans\\valid_10_15_100.csv')
-x_valid_feature = valid_of_channel_feature.drop(['b0','b1','b2','b3','id'],axis=1).values
-valid_of_channel_ans = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\ans\\valid_10_15_100.csv')
-x_valid_ans = valid_of_channel_feature.drop(['b0','b1','b2','b3','id'],axis=1).values
+data_2 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\ans\\valid_10_15_100_1.4.csv')
+x_valid = data_2[['feature1','feature2']].values
 
-test_of_channel_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\random_feature100_forTest.csv')
-x_test = test_of_channel_feature.drop(['complex'],axis=1).values
+data_3 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\random_feature100_fortest_with1.4.csv')
+x_test = data_3[['feature1','feature2']].values
 
 
 def create_DNN_model(hidden_layers, input_dim, neurons_per_layer):

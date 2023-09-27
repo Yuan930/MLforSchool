@@ -16,16 +16,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def transpose(list1):
     return[list(row) for row in zip(*list1)]
 data_1 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_train\\ans\\train_10_15_10000_1.4.csv')
-x_train = data_1.drop(['b0','b1','b2','b3','id'],axis=1).values
+x_train = data_1[['feature1','feature2']].values
 
 data_2 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_valid\\ans\\valid_10_15_100_1.4.csv')
-x_valid = data_2.drop(['b0','b1','b2','b3','id'],axis=1).values
+x_valid = data_2[['feature1','feature2']].values
+
 data_3 = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\random_feature100_fortest_with1.4.csv')
-x_test = data_3.drop(['complex'],axis=1).values
+x_test = data_3[['feature1','feature2']].values
 
 
 
-for i in range(3,4):
+for i in range(0,4):
     locals()['y_train'+str(i)] = data_1['b'+str(i)].values
 
 #print(y_train3)
@@ -46,10 +47,9 @@ for i in range(3,4):
 
     locals()['bb'+str(i)] = model.predict(x_test) #訓練好model使用predict預測看看在訓練的model跑的回歸線
     print(i)
-#arr = [bb0,bb1,bb2,bb3]
-arr = [bb3]
-# print(arr)
+arr = [bb0,bb1,bb2,bb3]
 
+# print(arr)
 # print(arr)
 # print(arr[0][1])
 # print(arr[1][1])
@@ -59,8 +59,8 @@ a = DataFrame(a)
 
 #answer = pd.read_csv('C://Users//oscar//Desktop//spyder//1123_6pilot_31ans//answer.csv')
 #a.to_excel('mlp_predict_answer_lab52_epoch50.xlsx')
-a.columns = [f'b{i}' for i in range(3,4)]
-a.to_csv('D://MLforSchool//dnn_experiments//independent_ans//mlp_predict_answer_lab2_16qam_10_15_100_1.4_neurous15_b3.csv')
+a.columns = [f'b{i}' for i in range(4)]
+a.to_csv('D://MLforSchool//dnn_experiments//independent_ans//mlp_predict_answer_lab2_16qam_10_15_100_1.4_neurous15.csv')
 #fn=str(epochs)+'_1'+str(batch_size)
 
 #model.save('C://Users//oscar//Desktop//spyder//keras'+fn+'.h5')
