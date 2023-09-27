@@ -6,12 +6,12 @@ point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
 #random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_test\\random_feature100_forTest.csv')
 #random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
-random_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\fU_for_test.csv')
+channel_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\fU_for_test.csv')
 
 
 point16_h0_csv.replace('i', 'j', regex=True, inplace=True)
 point16_h1_csv.replace('i', 'j', regex=True, inplace=True)
-random_feature_csv.replace('i', 'j', regex=True, inplace=True)
+channel_feature_csv.replace('i', 'j', regex=True, inplace=True)
 
 
 def cal_distance(a, b):
@@ -24,7 +24,7 @@ def cal_distance(a, b):
 # }
 dict_for_bit_ans = {}
 
-for j, row_rf in random_feature_csv.iterrows():
+for j, row_rf in channel_feature_csv.iterrows():
 
     list_rf = row_rf.values.tolist()
     list_rf.pop(0)
@@ -62,7 +62,7 @@ for key in dict_for_bit_ans.keys():
             index = index + 1
 
     csv = pd.DataFrame(result)                
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\result_{key}.csv')
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\result_{key}.csv')
 
 
 
