@@ -1,3 +1,4 @@
 /data/*
 /dnn_experiments/*
 /meeting/*
+/DNN/__pycache__/*

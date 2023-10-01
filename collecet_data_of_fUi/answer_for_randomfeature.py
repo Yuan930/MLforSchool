@@ -18,6 +18,8 @@ def point16_h(row):
 def cal_distance(a,b):
     return abs(a-b)
 
+
+
 results = []
 for j, row_rf in random_feature_csv.iterrows():
     d0 = []
@@ -29,7 +31,7 @@ for j, row_rf in random_feature_csv.iterrows():
     for i, row_h0 in point16_h0_csv.iterrows():
         h0 = point16_h(row_h0)         
         d0.append(cal_distance_of_random_feature_item(h0))  #for bk = 0
-        
+
     for i, row_h1 in point16_h1_csv.iterrows():
         h1 = point16_h(row_h1)       
         d1.append(cal_distance_of_random_feature_item(h1))  #for bk = 1
@@ -51,10 +53,6 @@ print(results_matrix)
     
        
 
-# result_matrix = []
-# # 每行四個答案
-# num_rows = len(results) // 4
-# result_matrix = np.array(results[:4 * num_rows]).reshape(num_rows, 4)
 csv = pd.DataFrame(results_matrix)
 csv.index = [f'b{i}' for i in range(bit)]
 # csv.T.to_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_train\\train_10_15_1000.csv') #train

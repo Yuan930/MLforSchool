@@ -1,18 +1,29 @@
 import pandas as pd
 import numpy as np
 import re
+
+ChannelFeatureData = 'valid'  #train valid test
+column = 10#根據測試資料的列數更改
+
 # 16point for h0 or h1
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
-#random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_test\\random_feature100_forTest.csv')
-#random_feature = pd.read_csv('D:\\MLforSchool\\data\\16qam_train\\random_feature1000_forTrain.csv')
-channel_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\fU_for_test.csv')
+channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\fU_for_{ChannelFeatureData}.csv')
 
+# 將複數變為絕對值的函數
+def change_all_positive(x):
+    return complex(abs(x.real), abs(x.imag))
+def change_i_to_j(x):
+    return complex(x.replace('i', 'j'))
 
 point16_h0_csv.replace('i', 'j', regex=True, inplace=True)
 point16_h1_csv.replace('i', 'j', regex=True, inplace=True)
-channel_feature_csv.replace('i', 'j', regex=True, inplace=True)
 
+channel_feature_csv = channel_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
+
+# 將所有複數取絕對值(象限壓縮)
+transform_to_positive = channel_feature_csv.applymap(change_all_positive)
+# print(transform_to_positive)
 
 def cal_distance(a, b):
     return abs(a - b)
@@ -24,11 +35,12 @@ def cal_distance(a, b):
 # }
 dict_for_bit_ans = {}
 
-for j, row_rf in channel_feature_csv.iterrows():
+for j, row_rf in transform_to_positive.iterrows():
+    
 
     list_rf = row_rf.values.tolist()
-    list_rf.pop(0)
     for random_feature_item in list_rf:
+
         for i, row_h0 in point16_h0_csv.iterrows():
             row_h1 = point16_h1_csv.iloc[i]
             list_h0 = row_h0.values.tolist()
@@ -49,7 +61,6 @@ for j, row_rf in channel_feature_csv.iterrows():
             
             dict_for_bit_ans[i].append(fUi)
             
-print(dict_for_bit_ans)
 # 整理成原本random_feature.csv格式
 for key in dict_for_bit_ans.keys():
     result = {}
@@ -58,21 +69,16 @@ for key in dict_for_bit_ans.keys():
         if index not in result:
             result[index] = []
         result[index].append(item)
-        if (len(result[index]) >= 10):  #根據測試資料的行數更改
+        if (len(result[index]) >= column):  #根據測試資料的列數更改
             index = index + 1
+    print(result)
 
-    csv = pd.DataFrame(result)                
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\result_{key}.csv')
-
-
-
+    # csv = pd.DataFrame(result)                
+    # csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\result_b{key}.csv')
 
 
-# fUi = pd.DataFrame(results[i], columns='ans')
-# fUi.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\result_i_{i}.csv', index=False)
-
-        
 
 
-        
+
+
 
