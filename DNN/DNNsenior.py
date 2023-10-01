@@ -48,7 +48,6 @@ for i in range(0,4):
     print(i)
 arr = [bb0,bb1,bb2,bb3]
 
-# print(arr)
 
 # print(arr)
 # print(arr[0][1])
@@ -58,7 +57,7 @@ a = transpose(arr)
 a = DataFrame(a)
 
 #answer = pd.read_csv('C://Users//oscar//Desktop//spyder//1123_6pilot_31ans//answer.csv')
-#a.to_excel('mlp_predict_answer_lab52_epoch50.xlsx')
+# #a.to_excel('mlp_predict_answer_lab52_epoch50.xlsx')
 a.columns = [f'b{i}' for i in range(0,4)]
 a.to_csv('D://MLforSchool//dnn_experiments//independent_ans//mlp_predict_answer_lab2_16qam_10_15_100_1.4_senior.csv')
 #fn=str(epochs)+'_1'+str(batch_size)

@@ -57,10 +57,6 @@ arr = [bb0,bb1,bb2,bb3]
 a = transpose(arr)
 a = DataFrame(a)
 
-#answer = pd.read_csv('C://Users//oscar//Desktop//spyder//1123_6pilot_31ans//answer.csv')
-#a.to_excel('mlp_predict_answer_lab52_epoch50.xlsx')
 a.columns = [f'b{i}' for i in range(4)]
 a.to_csv('D://MLforSchool//dnn_experiments//independent_ans//mlp_predict_answer_lab2_16qam_10_15_100_1.4_neurous15.csv')
-#fn=str(epochs)+'_1'+str(batch_size)
 
-#model.save('C://Users//oscar//Desktop//spyder//keras'+fn+'.h5')
