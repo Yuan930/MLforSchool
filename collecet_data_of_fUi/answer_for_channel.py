@@ -55,7 +55,7 @@ for j, row_rf in transform_to_positive.iterrows():
                 
             min_h0 = cal_min_distance_of_random_feature_item(list_h0)
             min_h1 = cal_min_distance_of_random_feature_item(list_h1)
-            fUi = min_h1 - min_h0
+            fUi = (min_h1 - min_h0)/0.0316
             if i not in dict_for_bit_ans:
                 dict_for_bit_ans[i] = []
             

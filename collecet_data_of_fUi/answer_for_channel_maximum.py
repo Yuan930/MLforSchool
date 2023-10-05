@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 
-ChannelFeatureData = 'valid'  #train valid test
+ChannelFeatureData = 'test'  #train valid test
 column = 10#根據測試資料的列數更改
 
 # 16point for h0 or h1
@@ -35,10 +35,10 @@ def cal_distance(a, b):
 # }
 dict_for_bit_ans = {}
 
-for j, row_rf in transform_to_positive.iterrows():
-    
-
+for j, row_rf in transform_to_positive.iterrows(): 
     list_rf = row_rf.values.tolist()
+    print(list_rf)
+
     for random_feature_item in list_rf:
 
         for i, row_h0 in point16_h0_csv.iterrows():
@@ -49,7 +49,7 @@ for j, row_rf in transform_to_positive.iterrows():
             list_h1.pop(0)
 
             def cal_distance_of_random_feature_item(item):
-                return np.exp((-1/0.0158)*cal_distance(complex(item), complex(random_feature_item)))
+                return np.exp((-1/0.0316)*cal_distance(complex(item), complex(random_feature_item)))
             def cal_min_distance_of_random_feature_item(array):
                 return sum(list(map(cal_distance_of_random_feature_item, array)))
                 
@@ -75,7 +75,7 @@ for key in dict_for_bit_ans.keys():
     print(result)
 
     csv = pd.DataFrame(result)                
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\result_b{key}.csv')
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\m111aximum_LLR_result_b{key}.csv')
 
 
 
