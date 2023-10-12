@@ -12,42 +12,52 @@ import pandas as pd
 import numpy as np
 from pandas import DataFrame
 import os
-
+import re
 
 from flatten import *
 
 
-bit = 2 # The answer of b0 or b1 ...
-
-
+bit = 0 # The answer of b0 or b1 ...
+column = 100
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def transpose(list1):
     return[list(row) for row in zip(*list1)]
 
+def change_i_to_j(x):
+    return complex(x.replace('i', 'j'))
+
+def remove_parentheses(x):
+    return re.sub(r'[()]', '', str(x))
+
+def change_all_positive(x):
+    return remove_parentheses(str(complex(abs(x.real), abs(x.imag))))
 
 def split_real_and_imag(comp):
     array = comp.replace('j', '').split('+')
     return [float(array[0]), float(array[1])]
 
-train_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\fU_for_train_positive.csv')
-x_train_feature = train_feature_csv.iloc[0:, 1:]
-list_x_train_complex =  flatten(x_train_feature.values)
+train_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\lab4_16qamUi_coderate10_snr8_train.csv')
+x_train_feature_i_to_j = train_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
+x_train_feature = x_train_feature_i_to_j.applymap(change_all_positive)
+list_x_train_complex =  x_train_feature.values.flatten()
 list_x_train_feature = list(map(split_real_and_imag, list_x_train_complex))
-train_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\ans\\result_b{bit}.csv')
+train_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\ans\\lab4_maximum_LLR_result_b{bit}.csv')
 y_train_ans = train_ans_csv.iloc[0: ,1:]
-list_y_train_ans = flatten(y_train_ans.values)
+list_y_train_ans = list(y_train_ans.values.flatten())
 
-valid_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\fU_for_valid_positive.csv')
-x_valid_feature = valid_feature_csv.iloc[0:, 1:]
-list_x_valid_complex =  flatten(x_valid_feature.values)
+valid_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\lab4_16qamUi_coderate10_snr8_valid.csv')
+x_valid_feature_i_to_j = valid_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
+x_valid_feature = x_valid_feature_i_to_j.applymap(change_all_positive)
+list_x_valid_complex = x_valid_feature.values.flatten()
 list_x_valid_feature = list(map(split_real_and_imag, list_x_valid_complex))
-valid_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\ans\\result_b{bit}.csv')
+valid_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_valid\\ans\\lab4_maximum_LLR_result_b{bit}.csv')
 y_valid_ans = valid_ans_csv.iloc[0: ,1:]
-list_y_valid_ans = flatten(y_valid_ans.values)
+list_y_valid_ans = list(y_valid_ans.values.flatten())
 
-test_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\fU_for_test_positive.csv')
-test_feature = test_feature_csv.iloc[0:, 1:]
-list_test_complex =  flatten(test_feature.values)
+test_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\lab4_16qamUi_coderate10_snr8_test.csv')
+test_feature_i_to_j = test_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
+test_feature = test_feature_i_to_j.applymap(change_all_positive)
+list_test_complex = test_feature.values.flatten()
 list_test_feature = list(map(split_real_and_imag, list_test_complex))
 
 
@@ -76,58 +86,13 @@ for item in flatten_predict_ans:
     if index not in dictionary_of_pridict_ans:
         dictionary_of_pridict_ans[index] = []
     dictionary_of_pridict_ans[index].append(item)
-    if len(dictionary_of_pridict_ans[index]) >= 10:
+    if len(dictionary_of_pridict_ans[index]) >= column:
         index = index + 1
 
-print(dictionary_of_pridict_ans)
+# print(dictionary_of_pridict_ans)
 
 csv = pd.DataFrame(dictionary_of_pridict_ans)
 
-csv.T.to_csv('D://MLforSchool//dnn_experiments//channel//mlp_predict_answer_lab1_16qam_10_15_100_channel_senior.csv')
-# for key in a.key():
-# arr = [a0,a1,a2,a3]
-
-
-# print(arr)
-
-# print(arr)
-# print(arr[0][1])
-# print(arr[1][1])
-# print(arr[0][1]-arr[1][1])
-# a = transpose(arr)
-# a = DataFrame(a)
-
-# a.columns = [f'b{i}' for i in range(4)]
-# a.to_csv('D://MLforSchool//dnn_experiments//channel//mlp_predict_answer_lab1_16qam_10_15_100_channel_senior.csv')
-
-
-
-
-# a = []
-# dictionary_of_pridict_ans = {}
-# a = [[1],[2],[3],[4],[5]]
-# flatten_a = flatten(a)
-# dic = {}
-# # print(len(a))
-# index = 0
-# for item in flatten_a:
-#     if index not in dic:
-#         dic[index] = []
-#     dic[index].append(item)
-#     if len(dic[index]) >= 2:
-#         index = index + 1
-
-# print(dic)
-
-# for key in dic.keys():
-#     result = {}
-#     index = 0
-#     for item in dic[key]:
-#         if index not in result:
-#             result[index] = []
-#         result[index].append(item)
-#         if (len(result[index]) >= 2):  #根據測試資料的列數更改
-#             index = index + 1
-#     print(result)
+csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//mlp_answer_lab4_16qam_10_15_b{bit}channel_senior_35_70_35_20.csv')
 
 
