@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 
-ChannelFeatureData = 'valid'  #train valid test
+ChannelFeatureData = 'test'  #train valid test
 column = 100#根據測試資料的列數更改
 N_var = 0.1585
 # 16point for h0 or h1
@@ -23,6 +23,7 @@ point16_h1_csv.replace('i', 'j', regex=True, inplace=True)
 channel_feature_csv = channel_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
 print(channel_feature_csv)
 # 將所有複數取絕對值(象限壓縮)
+
 transform_to_positive = channel_feature_csv.applymap(change_all_positive)
 # print(transform_to_positive)
 
