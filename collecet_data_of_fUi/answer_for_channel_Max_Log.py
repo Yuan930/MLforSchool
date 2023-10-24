@@ -3,12 +3,13 @@ import numpy as np
 import re
 
 ChannelFeatureData = 'valid'  #train valid test
-column = 10#根據測試資料的列數更改
+column = 100#根據測試資料的列數更改
+N_var = 0.1585
 
 # 16point for h0 or h1
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
-channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\fU_for_{ChannelFeatureData}.csv')
+channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\lab4_16qamUi_coderate10_snr8_{ChannelFeatureData}.csv')
 
 # 將複數變為絕對值的函數
 def change_all_positive(x):
@@ -26,7 +27,7 @@ transform_to_positive = channel_feature_csv.applymap(change_all_positive)
 # print(transform_to_positive)
 
 def cal_distance(a, b):
-    return abs(a - b)
+    return abs(a - b) ** 2
 
 # {
 #   0: [ans, ans, ans...],
@@ -55,7 +56,7 @@ for j, row_rf in transform_to_positive.iterrows():
                 
             min_h0 = cal_min_distance_of_random_feature_item(list_h0)
             min_h1 = cal_min_distance_of_random_feature_item(list_h1)
-            fUi = (min_h1 - min_h0)/0.0316
+            fUi = (min_h1 - min_h0)/N_var
             if i not in dict_for_bit_ans:
                 dict_for_bit_ans[i] = []
             
@@ -71,10 +72,10 @@ for key in dict_for_bit_ans.keys():
         result[index].append(item)
         if (len(result[index]) >= column):  #根據測試資料的列數更改
             index = index + 1
-    print(result)
+    # print(result)
 
-    # csv = pd.DataFrame(result)                
-    # csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\result_b{key}.csv')
+    csv = pd.DataFrame(result)                
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\lab4_Max_Log_LLR_result_b{key}.csv')
 
 
 

@@ -1,10 +1,10 @@
 import pandas as pd
 import re
 
-data = 'train'  #train valid test
+data = 'test'  #train valid test
 
 # 假設你有一個 DataFrame，包含複數數據
-feature_in_channel_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{data}\\fU_for_{data}.csv')
+feature_in_channel_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\lab4_16qamUi_coderate10_snr8_train.csv')
 
 # 將複數變為絕對值的函數
 def make_positive(x):
@@ -24,4 +24,4 @@ transform_to_positive = feature_in_channel_csv.applymap(make_positive)
 # 去除括號
 remove_parentheses_transform_to_positive = transform_to_positive.applymap(remove_parentheses)
 
-remove_parentheses_transform_to_positive.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{data}\\fU_for_{data}_positive.csv')
+remove_parentheses_transform_to_positive.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\lab4_16qamUi_coderate10_snr8_train_positive.csv')
