@@ -3,7 +3,7 @@ import numpy as np
 import re
 import matplotlib.pyplot as plt
 import pandas as rp
-from tools import change_i_to_j, change_all_positive
+from tools import change_i_to_j, change_all_positive, Extract_real_parts, Extract_imaginary_parts
 
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
@@ -22,26 +22,15 @@ feature2_complex_positive = feature2_complex_data.applymap(change_all_positive)
 point16_h0_complex = point16_h0_csv.iloc[0:, 1:].applymap(change_i_to_j)
 point16_h1_complex = point16_h1_csv.iloc[0:, 1:].applymap(change_i_to_j)
 
-# 提取实部和虚部
-point16_h0_real = point16_h0_complex.applymap(lambda x: x.real)
-point16_h0_imag = point16_h0_complex.applymap(lambda x: x.imag)
 
-point16_h1_real = point16_h1_complex.applymap(lambda x: x.real)
-point16_h1_imag = point16_h1_complex.applymap(lambda x: x.imag)
-
-feature_real = feature_complex.applymap(lambda x: x.real)
-feature_imag = feature_complex.applymap(lambda x: x.imag)
-
-feature2_real = feature2_complex_data.applymap(lambda x: x.real)
-feature2_imag = feature2_complex_data.applymap(lambda x: x.imag)
 # 繪製點圖
 plt.figure(figsize=(5, 5))  # 設置圖形大小
 
-plt.scatter(feature_real, feature_imag, label='8dB awgn channel point', marker='s',color='c', s=5) #for channel U'
-plt.scatter(feature2_real, feature2_imag, label='llr have different positive and negative', marker='o', color='b', s=50)
+plt.scatter(Extract_real_parts(feature_complex), Extract_imaginary_parts(feature_complex), label='8dB awgn channel point', marker='s',color='c', s=5) #for channel U'
+plt.scatter(Extract_real_parts(feature2_complex_data), Extract_imaginary_parts(feature2_complex_data), label='llr have different positive and negative', marker='o', color='b', s=50)
 # plt.scatter(feature_complex['feature1'], feature_complex['feature2'], label="16QAM uniform Ui'", marker='s', s=1) #for uniform U'
-plt.scatter(point16_h0_real, point16_h0_imag, label='16QAM constellations', marker='o', color='r', s=10)
-plt.scatter(point16_h1_real, point16_h1_imag, marker='o', color='r', s=10)
+plt.scatter(Extract_real_parts(point16_h0_complex), Extract_imaginary_parts(point16_h0_complex), label='16QAM constellations', marker='o', color='r', s=10)
+plt.scatter(Extract_real_parts(point16_h1_complex), Extract_imaginary_parts(point16_h1_complex), marker='o', color='r', s=10)
 
 
 plt.xlabel('Real Part')

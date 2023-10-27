@@ -74,7 +74,7 @@ for i in range(bit):
     loss = history.history['loss']
     val_loss = history.history['val_loss']
     epochs = range(1, len(loss) + 1)
-    start_epoch = 10
+    start_epoch = 5
     plt.plot(epochs[start_epoch:],val_loss[start_epoch:], label = 'val_loss')
     plt.plot(epochs[start_epoch:], loss[start_epoch:], label='loss')
 
