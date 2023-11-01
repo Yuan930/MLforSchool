@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 
-ChannelFeatureData = 'valid'  #train valid test
+ChannelFeatureData = 'test'  #train valid test
 column = 100#根據測試資料的列數更改
 N_var = 0.1585
 
@@ -56,11 +56,11 @@ for j, row_rf in transform_to_positive.iterrows():
                 
             min_h0 = cal_min_distance_of_random_feature_item(list_h0)
             min_h1 = cal_min_distance_of_random_feature_item(list_h1)
-            fUi = (min_h1 - min_h0)/N_var
+            llr = (min_h1 - min_h0)/N_var
             if i not in dict_for_bit_ans:
                 dict_for_bit_ans[i] = []
             
-            dict_for_bit_ans[i].append(fUi)
+            dict_for_bit_ans[i].append(llr)
             
 # 整理成原本random_feature.csv格式
 for key in dict_for_bit_ans.keys():

@@ -8,8 +8,10 @@ from tools import change_i_to_j, change_all_positive, Extract_real_parts, Extrac
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
 feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_train\\lab4_16qamUi_coderate10_snr8_train_positive.csv')
+feature2_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\lab4_16qamUi_coderate10_snr8_test_positive.csv')
+
 # feature_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\random_feature100_fortest_with1.4.csv')
-feature2_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\check\\lab4_check.csv')
+# feature2_csv = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\check\\lab4_check.csv')
 
 
 feature_complex = feature_csv.iloc[0:, 1:].applymap(change_i_to_j) #for channel U'
@@ -26,8 +28,8 @@ point16_h1_complex = point16_h1_csv.iloc[0:, 1:].applymap(change_i_to_j)
 # 繪製點圖
 plt.figure(figsize=(5, 5))  # 設置圖形大小
 
-plt.scatter(Extract_real_parts(feature_complex), Extract_imaginary_parts(feature_complex), label='8dB awgn channel point', marker='s',color='c', s=5) #for channel U'
-plt.scatter(Extract_real_parts(feature2_complex_data), Extract_imaginary_parts(feature2_complex_data), label='llr have different positive and negative', marker='o', color='b', s=50)
+plt.scatter(Extract_real_parts(feature_complex), Extract_imaginary_parts(feature_complex), label='train point', marker='s',color='c', s=5) #for channel U'
+plt.scatter(Extract_real_parts(feature2_complex_data), Extract_imaginary_parts(feature2_complex_data), label='test point', marker='o', color='b', s=5)
 # plt.scatter(feature_complex['feature1'], feature_complex['feature2'], label="16QAM uniform Ui'", marker='s', s=1) #for uniform U'
 plt.scatter(Extract_real_parts(point16_h0_complex), Extract_imaginary_parts(point16_h0_complex), label='16QAM constellations', marker='o', color='r', s=10)
 plt.scatter(Extract_real_parts(point16_h1_complex), Extract_imaginary_parts(point16_h1_complex), marker='o', color='r', s=10)
