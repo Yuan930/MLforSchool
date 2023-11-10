@@ -6,7 +6,7 @@ from tools import Extract_real_parts, Extract_imaginary_parts, change_to_complex
 import numpy as np
 #35_70_35_20  70_140_70_40
 bit = 4
-i=3
+i=0
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
 receiver_point = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\lab4_16qamUi_coderate10_snr8_test_positive.csv')
@@ -18,11 +18,11 @@ print(f'bit{i}')
 # actual answer
 # actual_answers = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') 
 # actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab4_maximum_LLR_result_b{i}.csv') 
-actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab4_Max_Log_LLR_result_b{i}.csv') 
+actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab5_MaxLog_LLR_result_b{i}.csv') 
 # actual_answers = pd.read_csv(f'D://MLforSchool//dnn_experiments//{predicted_answers2_csv_name}')
 # predict answer
 # predicted_answers = pd.read_csv(f'D://MLforSchool//dnn_experiments//{predicted_answers_csv_name}')
-predicted_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab4_maximum_LLR_result_b{i}.csv')
+predicted_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab5_maximum_LLR_result_b{i}.csv')
 
 
 def calc_mse(col):
@@ -36,7 +36,7 @@ def calc_mse(col):
 # calc_list = map(calc_mse,['b0','b1','b2','b3'])
 
 # for channel system
-n = 100
+n = 1000
 data_list = [str(i) for i in range(n)]
 calc_list = map(calc_mse,data_list)
 
@@ -139,7 +139,8 @@ predicted_answers_item = predicted_answers.iloc[0:, 1:]
 list_predicted_answers_item = list(predicted_answers_item.values.flatten())
 # print(list_predicted_answers_item)
 
+#畫圖看max error
 # check = Confirm_whether_the_plus_and_minus_signs_are_correct(list_actual_answers_item, list_predicted_answers_item)
-max_error = find_max_error(list_actual_answers_item, list_predicted_answers_item)
-find_top_10_max_errors(list_actual_answers_item, list_predicted_answers_item)
+# max_error = find_max_error(list_actual_answers_item, list_predicted_answers_item)
+# find_top_10_max_errors(list_actual_answers_item, list_predicted_answers_item)
 

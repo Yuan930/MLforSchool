@@ -3,12 +3,12 @@ import numpy as np
 import re
 
 ChannelFeatureData = 'test'  #train valid test
-column = 100#根據測試資料的列數更改
+column = 1000#根據測試資料的列數更改
 N_var = 0.1585
 # 16point for h0 or h1
 point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
 point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
-channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\lab4_16qamUi_coderate10_snr8_{ChannelFeatureData}.csv')
+channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\lab5_16qam_1015_snr8_20000{ChannelFeatureData}.csv')
 # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\lab3_16qamUi_coderate10_snr8.csv')
 # 將複數變為絕對值的函數
 def change_all_positive(x):
@@ -74,7 +74,7 @@ for key in dict_for_bit_ans.keys():
     print(result)
 
     csv = pd.DataFrame(result)                
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\lab4_maximum_LLR_result_b{key}.csv')
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_{ChannelFeatureData}\\ans\\lab5_maximum_LLR_result_b{key}.csv')
     # csv.T.to_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\lab3_maximum_LLR_result_b{key}.csv')
 
 
