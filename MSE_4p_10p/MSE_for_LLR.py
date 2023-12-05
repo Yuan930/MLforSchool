@@ -4,25 +4,29 @@ import statistics
 import matplotlib.pyplot as plt
 from tools import Extract_real_parts, Extract_imaginary_parts, change_to_complex, change_i_to_j
 import numpy as np
-#35_70_35_20  70_140_70_40
-bit = 4
-i=0
-point16_h0_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_0\\16qam_10_15.csv')
-point16_h1_csv = pd.read_csv('D:\\MLforSchool\\data\\constellations\\16qam_for_1\\16qam_10_15.csv')
-receiver_point = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\lab4_16qamUi_coderate10_snr8_test_positive.csv')
+#35_70_35_20  70_140_70_40  105_210_105_60
+bit = 8
+i= 3
+qam = 256
+snr = 17
+item = 4000
+# for i in range(bit):
+point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_0\\{qam}qam_10_15.csv')
+point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_1\\{qam}qam_10_15.csv')
+receiver_point = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_test\\lab1_{qam}qamUi_coderate10_snr17_4000test_positive.csv')
 receiver_point_item = list(receiver_point.iloc[0:, 1:].values.flatten())
 
-# predicted_answers_csv_name = f"channel//mlp_lab6_16qam_10_15_Max_Log_b{i}channel_140_280_140_80.csv"
-# predicted_answers2_csv_name = f"channel//lab4//mlp_without_valid_answer_lab4_16qam_10_15_b{i}channel_70_140_70_40.csv"
-print(f'bit{i}')
+# predicted_answers_csv_name = f"channel//lab4_snr8db_20000//mlp_lab6_{qam}qam_10_15_LogMap_b{i}channel_105_210_105_60.csv"
+# # predicted_answers2_csv_name = f"channel//lab4//mlp_without_valid_answer_lab4_{qam}qam_10_15_b{i}channel_70_140_70_40.csv"
+# print(f'bit{i}')
 # actual answer
-# actual_answers = pd.read_csv('D:\\MLforSchool\\data\\16qam_for_randomfeature\\16qam_test\\ans_for_test\\actual_ans_10_15_100.csv') 
-# actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab4_maximum_LLR_result_b{i}.csv') 
-actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab5_MaxLog_LLR_result_b{i}.csv') 
+# actual_answers = pd.read_csv('D:\\MLforSchool\\data\\{qam}qam_for_randomfeature\\{qam}qam_test\\ans_for_test\\actual_ans_10_15_100.csv') 
+actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_test\\ans\\lab1_LogMap_snr{snr}_LLR_result_b{i}_{item}.csv') 
+# actual_answers = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_test\\ans\\lab5_MaxLog_LLR_result_b{i}.csv') 
 # actual_answers = pd.read_csv(f'D://MLforSchool//dnn_experiments//{predicted_answers2_csv_name}')
 # predict answer
-# predicted_answers = pd.read_csv(f'D://MLforSchool//dnn_experiments//{predicted_answers_csv_name}')
-predicted_answers = pd.read_csv(f'D:\\MLforSchool\\data\\16qam_for_channel\\16qam_test\\ans\\lab5_maximum_LLR_result_b{i}.csv')
+predicted_answers = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//mlp_lab1_256qam_snr17_10_15_LogMap_b{i}channel_280_140_80.csv')
+# predicted_answers = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_test\\ans\\lab1_MaxLog_snr{snr}_result_b{i}_{item}.csv')
 
 
 def calc_mse(col):
@@ -36,7 +40,7 @@ def calc_mse(col):
 # calc_list = map(calc_mse,['b0','b1','b2','b3'])
 
 # for channel system
-n = 1000
+n = 100
 data_list = [str(i) for i in range(n)]
 calc_list = map(calc_mse,data_list)
 
@@ -105,14 +109,14 @@ def find_top_10_max_errors(a, b):
     c_complex = [complex(item) for item in c]
     c_df = pd.DataFrame(c_complex, columns=['ComplexValue'])
     draw_receiver_point = receiver_point.iloc[0:,1:].applymap(change_to_complex)
-    point16_h0_complex = point16_h0_csv.iloc[0:, 1:].applymap(change_i_to_j)
-    point16_h1_complex = point16_h1_csv.iloc[0:, 1:].applymap(change_i_to_j)
+    point_h0_complex = point_h0_csv.iloc[0:, 1:].applymap(change_i_to_j)
+    point_h1_complex = point_h1_csv.iloc[0:, 1:].applymap(change_i_to_j)
 
     plt.figure(figsize=(5, 5))
     plt.scatter(Extract_real_parts((draw_receiver_point)), Extract_imaginary_parts(draw_receiver_point), label='test_point', marker='o', color='c', s=5)
-    plt.scatter(Extract_real_parts(point16_h0_complex), Extract_imaginary_parts(point16_h0_complex), label='16QAM constellations', marker='o', color='r', s=5)
+    plt.scatter(Extract_real_parts(point_h0_complex), Extract_imaginary_parts(point_h0_complex), label='16QAM constellations', marker='o', color='r', s=5)
     plt.scatter(Extract_real_parts(c_df), Extract_imaginary_parts(c_df), label='max_error_point', marker='o', color='b', s=10)
-    plt.scatter(Extract_real_parts(point16_h1_complex), Extract_imaginary_parts(point16_h1_complex), marker='o', color='r', s=5)
+    plt.scatter(Extract_real_parts(point_h1_complex), Extract_imaginary_parts(point_h1_complex), marker='o', color='r', s=5)
 
     plt.xlabel('Real Part')
     plt.ylabel('Imaginary Part')
@@ -124,12 +128,24 @@ def find_top_10_max_errors(a, b):
     plt.legend(loc='upper right')
     
     # 設置xy軸範圍
-    plt.xlim(-0.2, 2.5)
-    plt.ylim(-0.2, 2.5)
+    plt.xlim(0, 2.5)
+    plt.ylim(0, 2.5)
 
     # 显示图形
     plt.show()
 
+def max_error_plot(a, b):
+    gaps = [abs(a[i] - b[i]) for i in range(len(a))]
+    plt.xlim(0, 2)
+    
+    x = np.arange(0, 2, 0.01)
+    plt.hist(gaps, bins=x, width=0.008, edgecolor='black')
+    plt.xlabel('max_error')
+    plt.ylabel('items')
+    plt.title(f'Subtraction of actual LLR and predict LLR bit{i}')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
     
 actual_answers_item = actual_answers.iloc[0:, 1:]
 list_actual_answers_item = list(actual_answers_item.values.flatten())
@@ -139,8 +155,8 @@ predicted_answers_item = predicted_answers.iloc[0:, 1:]
 list_predicted_answers_item = list(predicted_answers_item.values.flatten())
 # print(list_predicted_answers_item)
 
-#畫圖看max error
+# 畫圖看max error
 # check = Confirm_whether_the_plus_and_minus_signs_are_correct(list_actual_answers_item, list_predicted_answers_item)
-# max_error = find_max_error(list_actual_answers_item, list_predicted_answers_item)
-# find_top_10_max_errors(list_actual_answers_item, list_predicted_answers_item)
+max_error = max_error_plot(list_actual_answers_item, list_predicted_answers_item)
+find_top_10_max_errors(list_actual_answers_item, list_predicted_answers_item)
 
