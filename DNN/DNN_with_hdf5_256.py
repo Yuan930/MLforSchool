@@ -122,12 +122,20 @@ for items in range(1,41):
     b = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b1channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
     c = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b2channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
     d = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b3channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    e = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b4channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    f = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b5channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    g = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b6channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    h = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//actual_pre_llr//snr17//mlp_actual_lab3_256qam{items}_10_15_LogMap_b7channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
     list_a = list(a.iloc[0:,1:].values.flatten())
     list_b = list(b.iloc[0:,1:].values.flatten())
     list_c = list(c.iloc[0:,1:].values.flatten())
     list_d = list(d.iloc[0:,1:].values.flatten())
+    list_e = list(e.iloc[0:,1:].values.flatten())
+    list_f = list(f.iloc[0:,1:].values.flatten())
+    list_g = list(g.iloc[0:,1:].values.flatten())
+    list_h = list(h.iloc[0:,1:].values.flatten())
     # print("list_a",l。ist_a)
-    combine_list = list( item for pair in zip(list_a, list_b, list_c, list_d) for item in pair)
+    combine_list = list( item for pair in zip(list_a, list_b, list_c, list_d, list_e, list_f, list_g, list_h) for item in pair)
     dict = combine_list
 
     result = {}
