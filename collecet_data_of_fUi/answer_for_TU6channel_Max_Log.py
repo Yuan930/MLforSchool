@@ -2,15 +2,28 @@ import pandas as pd
 import numpy as np
 import re
 
-ChannelFeatureData = 'test'  #train valid test
+def Uirange(a):
+    if a == 'train':
+        Ui = 'Ui1_to_4'
+    elif a == 'test':
+        Ui = 'Ui5_to_8'
+    return Ui
+
+ChannelFeatureData = 'test'  # train valid test
+Ui = Uirange(ChannelFeatureData)
+
 qam =256
-column = 200#根據測試資料的列數更改
+column = 400#根據測試資料的列數更改
 snr = 17
 # 16point for h0 or h1
 point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_0\\{qam}qam_10_15.csv')
 point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_1\\{qam}qam_10_15.csv')
-channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab1_TU6_cr10_snr17_to_21_Ui5_to_8_20000{ChannelFeatureData}.csv')
-perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab1_TU6_cr10_snr17_to_21_Ui5_to_8_squaredH_divided_by_2var_20000{ChannelFeatureData}.csv')
+# channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\lab1_snr16_256qamUi1.csv')
+# channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\lab2_256qamUi2_cr10_snr17_4000test.csv')
+# perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\squaredH_divided_by_2var\\lab1_snr16_256qamUi1_coderate10_squaredH_divided_by_2var_real.csv')
+
+channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_40000{ChannelFeatureData}.csv')
+perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_squaredH_divided_by_2var_40000{ChannelFeatureData}.csv')
 def change_all_positive(x):
     return complex(abs(x.real), abs(x.imag))
 def change_i_to_j(x):
@@ -75,7 +88,7 @@ for key in dict_for_bit_ans.keys():
     # print(result)
 
     csv = pd.DataFrame(result)                
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab1_MaxLog_snr17_to_21_Ui5_to_8_LLR_result_b{key}.csv')
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab2_MaxLog_snr17_to_21_{Ui}_LLR_result_b{key}_40000.csv')
 
 
 

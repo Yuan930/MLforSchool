@@ -1,10 +1,20 @@
 import pandas as pd
 import numpy as np
+import math
 import re
 
-ChannelFeatureData = 'train'  #train valid test
+def Uirange(a):
+    if a == 'train':
+        Ui = 'Ui1_to_4'
+    elif a == 'test':
+        Ui = 'Ui5_to_8'
+    return Ui
+
+ChannelFeatureData = 'test'  # train valid test
+Ui = Uirange(ChannelFeatureData)
+
 qam =256
-column = 200#根據測試資料的列數更改
+column = 400#根據測試資料的列數更改
 snr = 17
 # 16point for h0 or h1
 point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_0\\{qam}qam_10_15.csv')
@@ -13,8 +23,8 @@ point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for
 # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\lab2_256qamUi2_cr10_snr17_4000test.csv')
 # perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\squaredH_divided_by_2var\\lab1_snr16_256qamUi1_coderate10_squaredH_divided_by_2var_real.csv')
 
-channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab1_TU6_cr10_snr17_to_21_Ui1_to_4_20000{ChannelFeatureData}.csv')
-perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab1_TU6_cr10_snr17_to_21_Ui1_to_4_squaredH_divided_by_2var_20000{ChannelFeatureData}.csv')
+channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_40000{ChannelFeatureData}.csv')
+perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_squaredH_divided_by_2var_40000{ChannelFeatureData}.csv')
 # 將複數變為絕對值的函數
 # print(channel_feature_csv)
 def change_all_positive(x):
@@ -47,8 +57,8 @@ for j, row_rf in transform_to_positive.iterrows():
     list_rf = row_rf.values.tolist()
     list_H = row_H.values.tolist()
     for k, random_feature_item in enumerate(list_rf):
-        # print(k, random_feature_item)
-
+        # print(j,k, random_feature_item)
+        
         for i, row_h0 in point_h0_csv.iterrows():
             row_h1 = point_h1_csv.iloc[i]
             list_h0 = row_h0.values.tolist()
@@ -57,19 +67,34 @@ for j, row_rf in transform_to_positive.iterrows():
             list_h1.pop(0)
             # print(list_H[k])
             
-            def cal_distance_of_random_feature_item(item):
+            def cal_distance_of_random_feature_item_forLogMap(item):
                 return np.exp(((-1)*list_H[k])*cal_distance(complex(random_feature_item), complex(item)))
-            def cal_min_distance_of_random_feature_item(array):
-                return sum(list(map(cal_distance_of_random_feature_item, array)))
+            def cal_distance_of_random_feature_item_forMaxLog(item):
+                return cal_distance(complex(item), complex(random_feature_item))
+            def cal_LogMap_distance_of_random_feature_item(array):
+                return sum(list(map(cal_distance_of_random_feature_item_forLogMap, array)))
+            def cal_MaxLog_min_distance_of_random_feature_item(array):
+                return min(list(map(cal_distance_of_random_feature_item_forMaxLog, array)))
                 
-            pbk0 = cal_min_distance_of_random_feature_item(list_h0)
-            pbk1 = cal_min_distance_of_random_feature_item(list_h1)
+            pbk0 = cal_LogMap_distance_of_random_feature_item(list_h0)
+            pbk1 = cal_LogMap_distance_of_random_feature_item(list_h1)
             llr = np.log(pbk0) - np.log(pbk1)
+            
+            if math.isinf(llr):
+                min_h0 = cal_MaxLog_min_distance_of_random_feature_item(list_h0)
+                min_h1 = cal_MaxLog_min_distance_of_random_feature_item(list_h1)
+                llr = (min_h1 - min_h0)*list_H[k]
+            else:
+                pass
+            
             # print(llr)
+            # break
             if i not in dict_for_bit_ans:
                 dict_for_bit_ans[i] = []
             
             dict_for_bit_ans[i].append(llr)
+        # break
+    # break
             
 # 整理成原本random_feature.csv格式
 for key in dict_for_bit_ans.keys():
@@ -85,7 +110,7 @@ for key in dict_for_bit_ans.keys():
 
     csv = pd.DataFrame(result)                
     # csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\ans\\lab4_LogMap_snr{snr}_LLR_result_b{key}_8000_new.csv')
-    csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab1_snr17_to_21_Ui1_to_4_LLR_result_b{key}.csv')
+    csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab2_snr17_to_21_{Ui}_LLR_result_b{key}_40000.csv')
 
 
 

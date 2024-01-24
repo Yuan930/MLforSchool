@@ -27,7 +27,7 @@ four_nodes = 60
 snr = 17
 bit = 8 # The answer of b0 or b1 ...
 i = 0
-column = 200
+column = 400
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def transpose(list1):
     return[list(row) for row in zip(*list1)]
@@ -36,6 +36,10 @@ def feature_csv_change_to_list(feature_csv):
     feature = feature_i_to_j.applymap(change_all_positive)
     list_complex =  feature.values.flatten()
     return list(map(split_real_and_imag, list_complex))
+def ans_and_H_csv_change_to_list(ans_and_H_csv):
+    ans_H = ans_and_H_csv.iloc[0: ,1:]
+    list_ans_H = list(ans_H.values.flatten())
+    return list_ans_H
 # 在損失函數中忽略 inf 值
 def custom_loss(y_true, y_pred):
     mask = tf.math.is_finite(y_true)  # 判斷是否有限
@@ -47,37 +51,34 @@ def custom_loss(y_true, y_pred):
 all_bit_mse_average = []
 all_sorted_results_dict = {}
 all_results_dict = {}
-for i in range(8):
+for i in [6,7]:
     
     mean_results = []
     mean_results_cal = []
 
     
     for j in range(1):
-        train_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\lab1_TU6_cr10_snr17_to_21_Ui1_to_4_20000train.csv')
+        train_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\lab2_TU6_cr10_snr17_to_21_Ui1_to_4_40000train.csv')
         list_x_train_feature = feature_csv_change_to_list(train_feature_csv)
         # print(list_x_train_feature)
-        train_H_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\lab1_TU6_cr10_snr17_to_21_Ui1_to_4_squaredH_divided_by_2var_20000train.csv')
-        y_train_H = train_H_csv.iloc[0: ,1:]
-        list_y_train_H = list(y_train_H.values.flatten())
+        train_H_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\lab2_TU6_cr10_snr17_to_21_Ui1_to_4_squaredH_divided_by_2var_40000train.csv')
+        list_y_train_H = ans_and_H_csv_change_to_list(train_H_csv)
         
-        train_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\ans\\lab1_snr17_to_21_Ui1_to_4_LLR_result_b{i}.csv')
-        z_train_ans = train_ans_csv.iloc[0: ,1:]
-        list_z_train_ans = list(z_train_ans.values.flatten())
+        train_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\ans\\lab2_snr17_to_21_Ui1_to_4_LLR_result_b{i}_40000.csv')
+        list_z_train_ans = ans_and_H_csv_change_to_list(train_ans_csv)
 
-        test_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\ans\\lab1_snr17_to_21_Ui5_to_8_LLR_result_b{i}.csv')
-        test_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\lab1_TU6_cr10_snr17_to_21_Ui5_to_8_20000test.csv')
+        test_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\ans\\lab2_snr17_to_21_Ui5_to_8_LLR_result_b{i}_40000.csv')
+        test_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\lab2_TU6_cr10_snr17_to_21_Ui5_to_8_40000test.csv')
         list_test_feature = feature_csv_change_to_list(test_feature_csv)
-        test_H_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\lab1_TU6_cr10_snr17_to_21_Ui5_to_8_squaredH_divided_by_2var_20000test.csv')
-        test_H = test_H_csv.iloc[0: ,1:]
-        list_test_H = list(test_H.values.flatten())
+        test_H_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_test\\lab2_TU6_cr10_snr17_to_21_Ui5_to_8_squaredH_divided_by_2var_40000test.csv')
+        list_test_H = ans_and_H_csv_change_to_list(test_H_csv)
 
         dictionary_of_pridict_ans = {}
         predict_ans = []
         print("bit%d,第%d次"% (i,j+1))
         combined_input = np.column_stack((list_x_train_feature, list_y_train_H)).tolist()
         combined_output = np.column_stack((list_test_feature, list_test_H)).tolist()
-        # print(combined_input)
+        print(combined_input)
 
         model = Sequential()#進行建造網路架構 在Sequential()裡面定義層數、激勵函數
         model.add(Dense(first_nodes, input_dim=3,  kernel_initializer='normal',activation='relu'))                               #加入神經層第一層(輸入14)輸出128 初始化器傳入 激活函數用relu #這邊的input一定要隨著特徵數量更改(pilot數乘2 因為實 虛 分開)
@@ -85,8 +86,8 @@ for i in range(8):
         model.add(Dense(third_nodes, input_dim=second_nodes,  kernel_initializer='normal',activation='relu'))
         model.add(Dense(four_nodes, input_dim=third_nodes,  kernel_initializer='normal',activation='relu'))
         model.add(Dense(1,  kernel_initializer='normal',activation='linear'))
-        optimizer = Adam(learning_rate=0.0001)
-        model.compile(loss=custom_loss, optimizer=optimizer, metrics = ['mse'])#設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
+        # optimizer = Adam(learning_rate=0.001)
+        model.compile(loss='MSE', optimizer='adadelta', metrics = ['mse'])#設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
         epochs = 5000#代表疊帶40次(總共要用全部的訓練樣本重複跑幾回合)
         batch_size = 100#為你的输入指定一个固定的 batch 大小(每個iteration以100筆做計算)
 
@@ -94,7 +95,7 @@ for i in range(8):
         history = model.fit(combined_input, list_z_train_ans, batch_size=batch_size, epochs=epochs ,verbose=1)
         # model.add(Dense(32, input_dim=x_train.shape[1],  kernel_initializer='normal',activation='relu'))
         print("Saving model to disk \n")
-        mp = f"D://MLforSchool//DNN//0111_snr{snr}_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_learning_rate0.0001_b{i}_time1.h5"
+        mp = f"D://MLforSchool//DNN//0119_TU6_CR10_DnnModel//0111_TU6lab2train40000_snr{snr}_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time1.h5"
         model.save(mp)    #存model
         
         ##########################畫圖###################################
@@ -103,7 +104,7 @@ for i in range(8):
         # # val_loss = history.history['val_loss']
 
         epochs = range(1, len(loss) + 1)
-        start_epoch = 100
+        start_epoch = 2000
         plt.figure()
         # plt.plot(epochs[start_epoch:],val_loss[start_epoch:], label = 'val_loss')
         plt.plot(epochs[start_epoch:], loss[start_epoch:], label='loss')
@@ -114,7 +115,7 @@ for i in range(8):
         plt.xlabel('epoch')
         
         plt.legend(['train_loss'], loc='upper right') 
-        save_path = f'D://MLforSchool//DNN//dnn_loss_pic//TU6lab1train20000bit{i}_leaerninig_rate0.001.png'
+        save_path = f'D://MLforSchool//DNN//dnn_loss_pic//TU6lab2train40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_bit{i}.png'
         plt.savefig(save_path)
         # plt.show()
         #######################################################################################################
@@ -132,13 +133,13 @@ for i in range(8):
 
         csv = pd.DataFrame(dictionary_of_pridict_ans)
 
-        # csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//snr17//mlp_lab1_256qam_snr17_10_15_LogMap_b{i}channel_{first_nodes}_{second_nodes}_{third_nodes}.csv')
+        csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//mlp_lab2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}.csv')
 
-        # predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1211_256qam//snr17//mlp_lab1_256qam_snr17_10_15_LogMap_b{i}channel_{first_nodes}_{second_nodes}_{third_nodes}.csv')
+        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//mlp_lab2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}.csv')
         
-        csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//test.csv')
+        # csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//test.csv')
 
-        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//test.csv')
+        # predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//test.csv')
         def calc_mse(col):
             actual_values = test_ans_csv[col].values
             predicted_values = predict_csv[col].values
