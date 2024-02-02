@@ -18,12 +18,13 @@ from pandas import DataFrame
 import os
 import re
 import tensorflow as tf
+from keras import backend as K
 from tools import change_i_to_j, change_all_positive, split_real_and_imag
 
-first_nodes = 105
-second_nodes =210
-third_nodes = 105
-four_nodes = 60
+first_nodes = 210
+second_nodes =420
+third_nodes = 210
+four_nodes = 120
 snr = 17
 bit = 8 # The answer of b0 or b1 ...
 i = 0
@@ -40,24 +41,24 @@ def ans_and_H_csv_change_to_list(ans_and_H_csv):
     ans_H = ans_and_H_csv.iloc[0: ,1:]
     list_ans_H = list(ans_H.values.flatten())
     return list_ans_H
-# 在損失函數中忽略 inf 值
-# def custom_loss(y_true, y_pred):
-#     mask = tf.math.is_finite(y_true)  # 判斷是否有限
-#     y_true = tf.where(mask, y_true, 0)  # 將非有限的值設置為 0
-#     y_pred = tf.where(mask, y_pred, 0)  # 將非有限的值設置為 0
-#     return tf.keras.losses.mean_squared_error(y_true, y_pred)
+def clipped_mse(y_true, y_pred):
+    # 將預測值限制在指定範圍，這裡以 -20 到 20 為例
+    y_pred = K.clip(y_pred, -20, 20)
+    # 計算 MSE
+    mse = K.mean(K.square(y_true - y_pred), axis=-1)
+    return mse
 
 
 all_bit_mse_average = []
 all_sorted_results_dict = {}
 all_results_dict = {}
-for i in [7]:
+for i in [0,1,2,3]:
     
     mean_results = []
     mean_results_cal = []
 
     
-    for j in range(2):
+    for j in [3,4]:
         train_feature_csv = pd.read_csv('D:\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_train\\lab2_TU6_cr10_snr17_to_21_Ui1_to_4_40000train.csv')
         list_x_train_feature = feature_csv_change_to_list(train_feature_csv)
         # print(list_x_train_feature)
@@ -77,7 +78,7 @@ for i in [7]:
 
         dictionary_of_pridict_ans = {}
         predict_ans = []
-        print("bit%d,第%d次"% (i,j+1))
+        print("bit%d,第%d次"% (i,j))
         combined_input = np.column_stack((list_x_train_feature, list_y_train_H)).tolist()
         combined_output = np.column_stack((list_test_feature, list_test_H)).tolist()
         # print(combined_input)
@@ -89,7 +90,7 @@ for i in [7]:
         model.add(Dense(four_nodes, input_dim=third_nodes,  kernel_initializer='normal',activation='relu'))
         model.add(Dense(1,  kernel_initializer='normal',activation='linear'))
         # optimizer = Adam(learning_rate=0.001)
-        model.compile(loss='MSE', optimizer='adadelta', metrics = ['mse'])#設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
+        model.compile(loss=clipped_mse, optimizer='adadelta', metrics = ['mse'])#設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
         epochs = 5000#代表疊帶40次(總共要用全部的訓練樣本重複跑幾回合)
         batch_size = 100#為你的输入指定一个固定的 batch 大小(每個iteration以100筆做計算)
 
@@ -97,7 +98,7 @@ for i in [7]:
         history = model.fit(combined_input, list_z_train_ans, batch_size=batch_size, epochs=epochs ,verbose=1)
         # model.add(Dense(32, input_dim=x_train.shape[1],  kernel_initializer='normal',activation='relu'))
         print("Saving model to disk \n")
-        mp = f"D://MLforSchool//DNN//0119_TU6_CR10_DnnModel//0222_TU6lab2_fun2_train40000_snr{snr}_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j+1}.h5"
+        mp = f"D://MLforSchool//DNN//0119_TU6_CR10_DnnModel//0222_TU6lab2_func2_train40000_snr{snr}_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j}.h5"
         model.save(mp)    #存model
         
         ##########################畫圖###################################
@@ -117,7 +118,7 @@ for i in [7]:
         plt.xlabel('epoch')
         
         plt.legend(['train_loss'], loc='upper right') 
-        save_path = f'D://MLforSchool//DNN//dnn_loss_pic//0222_TU6lab2_fun2_train40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_bit{i}_time{j+1}.png'
+        save_path = f'D://MLforSchool//DNN//dnn_loss_pic//0222_TU6lab2_func2_train40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_bit{i}_time{j}.png'
         plt.savefig(save_path)
         # plt.show()
         #######################################################################################################
@@ -135,9 +136,9 @@ for i in [7]:
 
         csv = pd.DataFrame(dictionary_of_pridict_ans)
 
-        csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//0222_mlp_lab2_func2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j+1}.csv')
+        csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//0222_mlp_lab2_func2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j}.csv')
 
-        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//0222_mlp_lab2_func2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j+1}.csv')
+        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//tu6_snr17_to_21//0222_mlp_lab2_func2_snr17_to_21_Ui5_to_8_LLR_result_40000_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adadelta_b{i}_time{j}.csv')
         
         # csv.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//test.csv')
 
