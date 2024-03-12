@@ -13,21 +13,27 @@ def Uirange(a):
 ChannelFeatureData = 'train'  # train valid test
 Ui = Uirange(ChannelFeatureData)
 
-qam =256
-column = 400#根據測試資料的列數更改
-for snr in range(1):
+qam ='QPSK'
+column = 31#根據測試資料的列數更改
+for snr in range(4):
+    if snr == 0:
+        channel = '1to28_fortrain' 
+    if snr == 1:
+        channel = '29to36_fortest'
+    if snr == 2:
+        channel = '1to8_fortrain'
+    if snr == 3:
+        channel = '9to19_fortest'
 # 16point for h0 or h1
-    point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_0\\{qam}qam_10_15.csv')
-    point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_1\\{qam}qam_10_15.csv')
+    var = 0.1586
+    point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}_for_0\\{qam}_4_15.csv')
+    point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}_for_1\\{qam}_4_15.csv')
     # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\lab1_snr16_256qamUi1.csv')
     # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\lab2_256qamUi2_cr10_snr17_4000test.csv')
     # perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\squaredH_divided_by_2var\\lab1_snr16_256qamUi1_coderate10_squaredH_divided_by_2var_real.csv')
-    channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_40000{ChannelFeatureData}_positive.csv')
-    perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_squaredH_divided_by_2var_40000{ChannelFeatureData}.csv')
-    # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_40000{ChannelFeatureData}.csv')
-    # perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\lab2_TU6_cr10_snr17_to_21_{Ui}_squaredH_divided_by_2var_40000{ChannelFeatureData}.csv')
-    # 將複數變為絕對值的函數
-    # print(channel_feature_csv)
+    channel_feature_csv = pd.read_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\Y_BER_8p7_{channel}.csv')
+    perfectH_csv = pd.read_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\complex_data_H8p7_perfect_{channel}.csv')
+   
     def change_all_positive(x):
         return complex(abs(x.real), abs(x.imag))
     def change_i_to_j(x):
@@ -36,14 +42,14 @@ for snr in range(1):
     point_h1_csv.replace('i', 'j', regex=True, inplace=True)
 
     channel_feature = channel_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
-    perfectH_square_2var = perfectH_square_2var_csv.iloc[0:, 1:]
-    print(channel_feature)
-    print(perfectH_square_2var)
+    perfectH = perfectH_csv.iloc[0:, 1:].applymap(change_i_to_j)
+    # print(channel_feature)
+    # print(perfectH)
     # 將所有複數取絕對值(象限壓縮)
-
-    transform_to_positive = channel_feature.applymap(change_all_positive)
+    perfectH_square_2var_csv = abs(perfectH)/var
+    print(perfectH_square_2var_csv)
     # print(transform_to_positive)
-
+    transform_to_positive = channel_feature.applymap(change_all_positive)
     def cal_distance(a, b):
         return abs(a - b) ** 2
     # {
@@ -54,11 +60,13 @@ for snr in range(1):
     dict_for_bit_ans = {}
 
     for j, row_rf in transform_to_positive.iterrows():
-        row_H =  perfectH_square_2var.iloc[j]
+        row_H =  perfectH_square_2var_csv.iloc[j]
+        
         list_rf = row_rf.values.tolist()
         list_H = row_H.values.tolist()
         for k, random_feature_item in enumerate(list_rf):
             # print(j,k, random_feature_item)
+            # print(row_H)
             
             for i, row_h0 in point_h0_csv.iterrows():
                 row_h1 = point_h1_csv.iloc[i]
@@ -66,8 +74,8 @@ for snr in range(1):
                 list_h1 = row_h1.values.tolist()
                 list_h0.pop(0)
                 list_h1.pop(0)
-                # print(list_H[k])
                 
+               
                 def cal_distance_of_random_feature_item_forLogMap(item):
                     return np.exp(((-1)*list_H[k])*cal_distance(complex(random_feature_item), complex(item)))
                 def cal_distance_of_random_feature_item_forMaxLog(item):
@@ -76,24 +84,25 @@ for snr in range(1):
                     return sum(list(map(cal_distance_of_random_feature_item_forLogMap, array)))
                 def cal_MaxLog_min_distance_of_random_feature_item(array):
                     return min(list(map(cal_distance_of_random_feature_item_forMaxLog, array)))
-                    
+                   
                 pbk0 = cal_LogMap_distance_of_random_feature_item(list_h0)
+                # print(pbk0)
                 pbk1 = cal_LogMap_distance_of_random_feature_item(list_h1)
                 llr = np.log(pbk0) - np.log(pbk1)
+                # print(llr)
+                # if math.isinf(llr):
+                #     min_h0 = cal_MaxLog_min_distance_of_random_feature_item(list_h0)
+                #     min_h1 = cal_MaxLog_min_distance_of_random_feature_item(list_h1)
+                #     llr = (min_h1 - min_h0)*list_H[k]
+                # else:
+                #     pass
                 
-                if math.isinf(llr):
-                    min_h0 = cal_MaxLog_min_distance_of_random_feature_item(list_h0)
-                    min_h1 = cal_MaxLog_min_distance_of_random_feature_item(list_h1)
-                    llr = (min_h1 - min_h0)*list_H[k]
-                else:
-                    pass
-                
-                if llr >20:
-                    llr = 20
-                elif llr < -20:
-                    llr = -20
-                else:
-                    pass
+                # if llr >20:
+                #     llr = 20
+                # elif llr < -20:
+                #     llr = -20
+                # else:
+                #     pass
                  
                 
                 # print(llr)
@@ -120,7 +129,7 @@ for snr in range(1):
         csv = pd.DataFrame(result)                
         # csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\ans\\lab4_LogMap_snr{snr}_LLR_result_b{key}_8000_new.csv')
         # csv.T.to_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab2_snr17_to_21_{Ui}_LLR_result_b{key}_40000.csv')
-        csv.T.to_csv(f'D:\\OneDrive - 國立臺北科技大學\\MLforSchool\\data\\256qam_for_channel\\TU6_256qam_{ChannelFeatureData}\\ans\\lab2_func2_snr17_to_21_{Ui}_LLR_result_b{key}_40000.csv')
+        csv.T.to_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\HnoSquare_ans_positive_LogMapllr_{channel}_b{key}.csv')
 
 
 

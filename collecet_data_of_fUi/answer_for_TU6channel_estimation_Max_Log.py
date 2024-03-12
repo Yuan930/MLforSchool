@@ -2,29 +2,29 @@ import pandas as pd
 import numpy as np
 import re
 
-def Uirange(a):
-    if a == 'train':
-        Ui = 'Ui1_to_4'
-    elif a == 'test':
-        Ui = 'Ui5_to_8'
-    return Ui
 
-ChannelFeatureData = 'train'  # train valid test
-Ui = Uirange(ChannelFeatureData)
 
-qam =256
-column = 8100#根據測試資料的列數更改
+qam ='QPSK'
+column = 31  #根據測試資料的列數更改
 snr = 17
-for snr in [17,18,19,20,21]:
-    # 16point for h0 or h1
-    point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_0\\{qam}qam_10_15.csv')
-    point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}qam_for_1\\{qam}qam_10_15.csv')
+for snr in range(4):
+    if snr == 0:
+        channel = '1to28_fortrain' 
+    if snr == 1:
+        channel = '29to36_fortest'
+    if snr == 2:
+        channel = '1to8_fortrain'
+    if snr == 3:
+        channel = '9to19_fortest'
+# 16point for h0 or h1
+    var = 0.1586
+    point_h0_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}_for_0\\{qam}_4_15.csv')
+    point_h1_csv = pd.read_csv(f'D:\\MLforSchool\\data\\constellations\\{qam}_for_1\\{qam}_4_15.csv')
     # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\lab1_snr16_256qamUi1.csv')
     # channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\{qam}qam_{ChannelFeatureData}\\lab2_256qamUi2_cr10_snr17_4000test.csv')
     # perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\squaredH_divided_by_2var\\lab1_snr16_256qamUi1_coderate10_squaredH_divided_by_2var_real.csv')
-
-    channel_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\0125_lab1_tu6\\lab1_snr{snr}_256qamUi9_coderate10.csv')
-    perfectH_square_2var_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\0125_lab1_tu6\\squaredH_divided_by_2var\\lab1_snr{snr}_256qamUi9_coderate10_squaredH_divided_by_2var_real.csv')
+    channel_feature_csv = pd.read_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\Y_BER_8p7_{channel}.csv')
+    perfectH_csv = pd.read_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\complex_data_H8p7_perfect_{channel}.csv')
     def change_all_positive(x):
         return complex(abs(x.real), abs(x.imag))
     def change_i_to_j(x):
@@ -33,10 +33,11 @@ for snr in [17,18,19,20,21]:
     point_h1_csv.replace('i', 'j', regex=True, inplace=True)
 
     channel_feature = channel_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
-    perfectH_square_2var = perfectH_square_2var_csv.iloc[0:, 1:]
+    perfectH = perfectH_csv.iloc[0:, 1:].applymap(change_i_to_j)
     print(channel_feature)
-    print(perfectH_square_2var)
+    print(perfectH)
     # 將所有複數取絕對值(象限壓縮)
+    perfectH_square_2var_csv = (abs(perfectH))**2/var
     transform_to_positive = channel_feature.applymap(change_all_positive)
 
     def cal_distance(a, b):
@@ -50,7 +51,7 @@ for snr in [17,18,19,20,21]:
     dict_for_bit_ans = {}
 
     for j, row_rf in transform_to_positive.iterrows():
-        row_H =  perfectH_square_2var.iloc[j]
+        row_H =  perfectH_square_2var_csv.iloc[j]
         list_rf = row_rf.values.tolist()
         list_H = row_H.values.tolist()
 
@@ -71,6 +72,14 @@ for snr in [17,18,19,20,21]:
                 min_h0 = cal_min_distance_of_random_feature_item(list_h0)
                 min_h1 = cal_min_distance_of_random_feature_item(list_h1)
                 llr = (min_h1 - min_h0)*list_H[k]
+                
+                if llr >20:
+                    llr = 20
+                elif llr < -20:
+                    llr = -20
+                else:
+                    pass
+                
                 if i not in dict_for_bit_ans:
                     dict_for_bit_ans[i] = []
                 
@@ -89,7 +98,7 @@ for snr in [17,18,19,20,21]:
         # print(result)
 
         csv = pd.DataFrame(result)                
-        csv.T.to_csv(f'D:\\OneDrive - 國立臺北科技大學\\MLforSchool\\data\\256qam_for_channel\\0125_lab1_tu6\\ans\\lab1_snr{snr}_MaxLog_256qamUi9_coderate10_LLR_result_b{key}.csv')
+        csv.T.to_csv(f'D:\\Desktop\\data\\check_BER\\0307yuan_QPSK_8dB_cr4_TU6\\ans_positive_MaxLopllr_{channel}_b{key}.csv')
 
 
 

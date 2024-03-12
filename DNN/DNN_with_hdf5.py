@@ -22,7 +22,7 @@ second_nodes =210
 third_nodes = 105
 four_nodes = 60
 qam = 16
-bit = 4 # The answer of b0 or b1 ...
+bit = 3 # The answer of b0 or b1 ...
 dataframes = []
 
 def calc_mse(col):
@@ -44,8 +44,8 @@ def modify_llr_in_bit1(real_part, llr):
 
 
 print("items")
-for items in range(1,101):
-    test_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\1106_lab5_r_100\\snr835\\lab5_16qamUi{items}_coderate10_snr8.35.csv')
+for items in range(1):
+    test_feature_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\256qam_test\\lab3_256qamUi2_cr10_snr17_6000test.csv')
     test_feature_i_to_j = test_feature_csv.iloc[0:, 1:].applymap(change_i_to_j)
     test_feature_all_positive = test_feature_i_to_j.applymap(change_all_positive)
     list_test_all_positive_complex = test_feature_all_positive.values.flatten()
@@ -57,18 +57,18 @@ for items in range(1,101):
     list_test_imag_part = [item.imag for item in list_complex_feature]
     list_test_real_part = [item.real for item in list_complex_feature]
     for j in range(bit):
-        column = 16200
+        column = 100
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
         def transpose(list1):
             return[list(row) for row in zip(*list1)]
 
-        # test_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\{qam}qam_for_channel\\1106_lab5_r_100\\ans\\lab5_16qamUi2_LogMap_snr835_LLR_result_b{j}.csv')
+        test_ans_csv = pd.read_csv(f'D:\\MLforSchool\\data\\256qam_for_channel\\256qam_test\\ans\\lab3_LogMap_snr17_LLR_result_b{bit}_6000.csv')
 
         dictionary_of_pridict_ans1 = {}
         predict_ans = []
         print(j)
 
-        MODEL_PATH = f'D://MLforSchool//DNN//snr835_105_210_105_60_LogMap_modelb{j}.h5'
+        MODEL_PATH = f'D://MLforSchool//DNN//lab4_snr17_105_210_105_60_LogMap_modelb3.h5'
         model = load_model(MODEL_PATH)
 
 
@@ -89,58 +89,58 @@ for items in range(1,101):
         csv1 = pd.DataFrame(dictionary_of_pridict_ans1)
 
         # csv1.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//snr8//mlp_lab5_{qam}qam{items}_10_15_LogMap_b{j}channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-        csv1.T.to_csv(f'D://MLforSchool//dnn_experiments//test.csv')
+        csv1.T.to_csv(f'D://MLforSchool//dnn_experiments//256qam_105_210_105_60_bit3.csv')
 
         # predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//snr8//mlp_lab5_{qam}qam{items}_10_15_LogMap_b{j}channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//test.csv')
+        predict_csv = pd.read_csv(f'D://MLforSchool//dnn_experiments//256qam_105_210_105_60_bit3.csv')
 
-        # n = column
-        # data_list = [str(i) for i in range(n)]
-        # calc_list = map(calc_mse,data_list)
-        # print(statistics.mean(calc_list))
-        dictionary_of_pridict_ans2 = {}
+        n = column
+        data_list = [str(i) for i in range(n)]
+        calc_list = map(calc_mse,data_list)
+        print(statistics.mean(calc_list))
+    #     dictionary_of_pridict_ans2 = {}
 
-        if j == 0:
-            predict_real_llr_csv = np.vectorize(modify_llr_in_bit0)(list_test_imag_part, predict_csv.iloc[0:, 1:].values.flatten())
+    #     if j == 0:
+    #         predict_real_llr_csv = np.vectorize(modify_llr_in_bit0)(list_test_imag_part, predict_csv.iloc[0:, 1:].values.flatten())
 
-        elif j == 1:
-            predict_real_llr_csv = np.vectorize(modify_llr_in_bit1)(list_test_real_part, predict_csv.iloc[0:, 1:].values.flatten())
+    #     elif j == 1:
+    #         predict_real_llr_csv = np.vectorize(modify_llr_in_bit1)(list_test_real_part, predict_csv.iloc[0:, 1:].values.flatten())
         
-        else:
-            predict_real_llr_csv = flatten_predict_ans
+    #     else:
+    #         predict_real_llr_csv = flatten_predict_ans
         
-        for item in predict_real_llr_csv:
-            if index not in dictionary_of_pridict_ans2:
-                dictionary_of_pridict_ans2[index] = []
-            dictionary_of_pridict_ans2[index].append(item)
-            if len(dictionary_of_pridict_ans2[index]) >= column:
-                index = index + 1
-        csv2 = pd.DataFrame(dictionary_of_pridict_ans2)
-        csv2.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b{j}channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    #     for item in predict_real_llr_csv:
+    #         if index not in dictionary_of_pridict_ans2:
+    #             dictionary_of_pridict_ans2[index] = []
+    #         dictionary_of_pridict_ans2[index].append(item)
+    #         if len(dictionary_of_pridict_ans2[index]) >= column:
+    #             index = index + 1
+    #     csv2 = pd.DataFrame(dictionary_of_pridict_ans2)
+    #     csv2.T.to_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b{j}channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
         
-    dict = {}
-    a = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b0channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-    b = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b1channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-    c = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b2channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-    d = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b3channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
-    list_a = list(a.iloc[0:,1:].values.flatten())
-    list_b = list(b.iloc[0:,1:].values.flatten())
-    list_c = list(c.iloc[0:,1:].values.flatten())
-    list_d = list(d.iloc[0:,1:].values.flatten())
-    # print("list_a",l。ist_a)
-    combine_list = list( item for pair in zip(list_a, list_b, list_c, list_d) for item in pair)
-    dict = combine_list
+    # dict = {}
+    # a = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b0channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    # b = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b1channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    # c = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b2channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    # d = pd.read_csv(f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_b3channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv')
+    # list_a = list(a.iloc[0:,1:].values.flatten())
+    # list_b = list(b.iloc[0:,1:].values.flatten())
+    # list_c = list(c.iloc[0:,1:].values.flatten())
+    # list_d = list(d.iloc[0:,1:].values.flatten())
+    # # print("list_a",l。ist_a)
+    # combine_list = list( item for pair in zip(list_a, list_b, list_c, list_d) for item in pair)
+    # dict = combine_list
 
-    result = {}
-    index = 0
-    for item in dict:
-        if index not in result:
-            result[index] = []
-        result[index].append(item)
-        if (len(result[index]) >= 64800):  #根據測試資料的列數更改
-            index = index + 1
-    # print(result)
+    # result = {}
+    # index = 0
+    # for item in dict:
+    #     if index not in result:
+    #         result[index] = []
+    #     result[index].append(item)
+    #     if (len(result[index]) >= 64800):  #根據測試資料的列數更改
+    #         index = index + 1
+    # # print(result)
 
-    llr = pd.DataFrame(result)
+    # llr = pd.DataFrame(result)
 
-    llr.T.to_csv((f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//for_matlab//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv'))
+    # llr.T.to_csv((f'D://MLforSchool//dnn_experiments//channel//1111_lab5_r_100_real//actual_pre_llr//snr835//for_matlab//mlp_actual_lab5_{qam}qam{items}_10_15_LogMap_channel_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}.csv'))
