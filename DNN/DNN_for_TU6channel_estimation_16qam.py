@@ -21,13 +21,12 @@ import tensorflow as tf
 from keras import backend as K
 from tools import change_i_to_j, change_all_positive, remove_parentheses, split_real_and_imag
 
-first_nodes = 1050
-second_nodes =2100
-third_nodes = 1050
-four_nodes = 600
+first_nodes = 210
+second_nodes = 420
+third_nodes = 210
+four_nodes = 120
 
-bit = 4
-i = 0
+
 column = 31
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 def transpose(list1):
@@ -61,37 +60,40 @@ def complex_to_positive(complex_str):
 
     return positive_real, positive_imag
 
+def train_data(bit, j):
+    train_Ui_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\train_TU6_16qam_Y_BER_8p7_12dB_70.csv')
+    Ui_train = train_Ui_csv[str(j)].values
+    Ui_train_real_imag = np.array(feature_csv_change_to_list(Ui_train))
+    train_predictH_data_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\train_pilot_8p7_TU6_16qam_12dB_70.csv')
+    pilot_train = train_predictH_data_csv.drop(['id'],axis = 1).values
+    var_train = np.full((Ui_train_real_imag.shape[0], 1), 0.0631)
+    train_ans_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\train_data_LogMapllr_b{bit}.csv')
+    train_ans = train_ans_csv[str(j)].values
+    return Ui_train_real_imag, pilot_train, var_train, train_ans
 
-all_bit_mse_average = []
-all_sorted_results_dict = {}
-all_results_dict = {}
+def test_data(j):
+    test_Ui_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\test_TU6_16qam_Y_BER_8p7_12dB_30.csv')
+    Ui_test = test_Ui_csv[str(j)].values
+    Ui_test_real_imag = np.array(feature_csv_change_to_list(Ui_test))
+    
+    test_predictH_data_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\test_pilot_8p7_TU6_16qam_12dB_30.csv')
+    pilot_test = test_predictH_data_csv.drop(['id'],axis = 1).values
+    var_test = np.full((Ui_test_real_imag.shape[0], 1), 0.0631)
+    return Ui_test_real_imag, pilot_test,var_test
 
-for i in [2,3]:
+for i in range(4):
     
     mean_results = []
     mean_results_cal = []
     for j in range(1,32):
         ########################################TRAIN#######################################
-        train_Ui_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\train_TU6_16qam_Y_BER_8p7_28.csv')
-        Ui_train = train_Ui_csv[str(j)].values
-        Ui_train_real_imag = np.array(feature_csv_change_to_list(Ui_train))
-        train_predictH_data_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\train_8p7_TU6_16qam_28.csv')
-        pilot_train = train_predictH_data_csv.drop(['id'],axis = 1).values
-        var_train = np.full((Ui_train_real_imag.shape[0], 1), 0.1585)
-        train_ans_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\train_data_LogMapllr_b{i}.csv')
-        train_ans = train_ans_csv[str(j)].values
+        Ui_train_real_imag, pilot_train, var_train, train_ans = train_data(i, j)
         
         train_feature = np.hstack((Ui_train_real_imag, pilot_train,var_train))
-        
+        print(train_feature)
 #         #########################################TEST#####################################
-        test_Ui_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\TU6_16qam_Y_BER_8p7_29to36_fortest.csv')
-        Ui_test = test_Ui_csv[str(j)].values
-        Ui_test_real_imag = np.array(feature_csv_change_to_list(Ui_test))
-        
-        test_predictH_data_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\test8p7_TU6_16qam29to36.csv')
-        pilot_test = test_predictH_data_csv.drop(['id'],axis = 1).values
-        var_test = np.full((Ui_test_real_imag.shape[0], 1), 0.1585)
-        # test_ans_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\test_data_LogMapllr_b{i}.csv')
+        Ui_test_real_imag, pilot_test,var_test = test_data(j)
+        # test_ans_csv = pd.read_csv(f'D:\\py3710\\py_train_data\\0425yuan_16qam_8dB_cr10_TU6\\test_data_LogMapllr_b{i}.csv')
         # test_ans = test_ans_csv.drop(['id'],axis =1).values
 
         test_feature = np.hstack((Ui_test_real_imag, pilot_test,var_test))
@@ -109,13 +111,13 @@ for i in [2,3]:
         model.add(Dense(1,  kernel_initializer='normal',activation='linear'))
         optimizer = Adam(learning_rate=0.0001)
         model.compile(loss='MSE', optimizer=optimizer, metrics = ['mse'])#設定model的loss和優化器(分別是MSE和adam) ,metrics=['mse','mape']
-        epochs = 1000#代表疊帶40次(總共要用全部的訓練樣本重複跑幾回合)
+        epochs = 2000#代表疊帶40次(總共要用全部的訓練樣本重複跑幾回合)
         batch_size = 100#為你的输入指定一个固定的 batch 大小(每個iteration以100筆做計算)
 
         history = model.fit(train_feature, train_ans, batch_size=batch_size, epochs=epochs ,verbose=1)
         # model.add(Dense(32, input_dim=x_train.shape[1],  kernel_initializer='normal',activation='relu'))
         print("Saving model to disk \n")
-        mp = f"D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\DNN_hdf5\\0411_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_bit{i}_preLLR{j}.h5"
+        mp = f"D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\DNN_hdf5\\0510_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_epoch{epochs}_batch{batch_size}_bit{i}_preLLR{j}.h5"
         model.save(mp)    #存model
         
         ##########################畫圖###################################
@@ -132,12 +134,12 @@ for i in [2,3]:
         plt.xlabel('epoch')
         
         plt.legend(['train_loss'], loc='upper right') 
-        save_path = f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\DNN_pic\\0411_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_bit{i}_hdf5LLR{j}.png'
+        save_path = f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\DNN_pic\\0510_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_epoch{epochs}_batch{batch_size}_bit{i}_hdf5LLR{j}.png'
         plt.savefig(save_path)
         # plt.show()
 #         #######################################################################################################
         locals()['anss'+str(j)] = model.predict(test_feature) #訓練好model使用predict預測看看在訓練的model跑的回歸線
-        locals()['anss'+str(j)] = np.clip(locals()['anss'+str(j)], -20, 20)
+        locals()['anss'+str(j)] = np.clip(locals()['anss'+str(j)], -4, 4)
         print(i,'column',j)
     arr = [anss1,anss2,anss3,anss4,anss5,anss6,anss7,anss8,anss9,anss10,anss11,anss12,anss13,anss14,anss15,anss16,anss17,anss18,anss19,anss20,anss21,anss22,anss23,anss24,anss25,anss26,anss27,anss28,anss29,anss30,anss31]
     print(arr)
@@ -148,4 +150,4 @@ for i in [2,3]:
     print(arr[0][1]-arr[1][1])
     a = transpose(arr)
     a = DataFrame(a)
-    a.to_csv(f'D:\\py3710\\py_train_data\\0411yuan_16qam_8dB_cr10_TU6\\DNN_predict_ans\\0411_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_bit{i}_preLLR.csv')
+    a.to_csv(f'D:\\py3710\\py_train_data\\0509yuan_16qam_17dB_cr10_TU6\\DNN_predict_ans\\0510_{first_nodes}_{second_nodes}_{third_nodes}_{four_nodes}_adam0.0001_epoch{epochs}_batch{batch_size}_bit{i}_preLLR.csv')
